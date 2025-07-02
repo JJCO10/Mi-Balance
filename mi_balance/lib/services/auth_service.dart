@@ -1,31 +1,60 @@
-import '../models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../models/user_model.dart';
+import 'user_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final UserService _userService = UserService();
 
-  Future<UserModel?> register(String email, String password) async {
+  Future<UserModel?> register({
+    required String email,
+    required String password,
+    required String name,
+    required String nickname,
+    required String gender,
+  }) async {
     try {
-      final cred = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return UserModel(uid: cred.user!.uid, email: cred.user!.email!);
+
+      User? user = result.user;
+      if (user != null) {
+        UserModel userModel = UserModel(
+          uid: user.uid,
+          email: email,
+          name: name,
+          nickname: nickname,
+          gender: gender,
+        );
+
+        await _userService.saveUser(userModel);
+        return userModel;
+      }
+
+      return null;
     } catch (e) {
-      print("Error al registrar: $e");
+      print('Register error: $e');
       return null;
     }
   }
 
   Future<UserModel?> login(String email, String password) async {
     try {
-      final cred = await _auth.signInWithEmailAndPassword(
+      UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return UserModel(uid: cred.user!.uid, email: cred.user!.email!);
+
+      final uid = result.user?.uid;
+      if (uid != null) {
+        return await _userService.getUser(uid);
+      }
+
+      return null;
     } catch (e) {
-      print("Error al iniciar sesión: $e");
+      print('Login error: $e');
       return null;
     }
   }

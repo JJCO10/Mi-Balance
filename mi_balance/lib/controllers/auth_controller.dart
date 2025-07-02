@@ -12,8 +12,20 @@ class AuthController with ChangeNotifier {
     return user != null;
   }
 
-  Future<bool> register(String email, String password) async {
-    user = await _authService.register(email, password);
+  Future<bool> register({
+    required String email,
+    required String password,
+    required String name,
+    required String nickname,
+    required String gender,
+  }) async {
+    user = await _authService.register(
+      email: email,
+      password: password,
+      name: name,
+      nickname: nickname,
+      gender: gender,
+    );
     notifyListeners();
     return user != null;
   }
