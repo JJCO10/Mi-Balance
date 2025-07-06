@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controllers/auth_controller.dart';
-import 'login_screen.dart';
+import '../../controllers/auth_controller.dart';
+import '../auth/login_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override

@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:mi_balance/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
-import 'views/login_screen.dart';
+import 'views/auth/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
