@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:mi_balance/controllers/auth_controller.dart';
+import 'package:mi_balance/controllers/expense_controller.dart';
+import 'package:mi_balance/controllers/expense_type_controller.dart';
+import 'package:mi_balance/controllers/income_controller.dart';
+import 'package:mi_balance/controllers/income_type_controller.dart';
+import 'package:mi_balance/views/dashboard/balances_screen.dart';
+import 'package:mi_balance/views/dashboard/home_screen.dart';
+import 'package:mi_balance/views/dashboard/management/management_screen.dart';
+import 'package:mi_balance/views/dashboard/settings/settings_screen.dart';
+import 'package:mi_balance/views/dashboard/transactions/transactions_screen.dart';
 import 'package:provider/provider.dart';
-import '../../controllers/auth_controller.dart';
-import 'home_screen.dart';
-import 'balances_screen.dart';
-import 'transactions/transactions_screen.dart';
-import 'management/management_screen.dart';
-import 'settings/settings_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -17,14 +21,6 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    BalancesScreen(),
-    TransactionsScreen(),
-    ManagementScreen(),
-    SettingsScreen(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -34,10 +30,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthController>(context).user;
+    final uid = user?.uid ?? '';
+
+    final List<Widget> screens = [
+      const HomeScreen(),
+      const BalancesScreen(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => IncomeController(uid)),
+          ChangeNotifierProvider(create: (_) => ExpenseController(uid)),
+          ChangeNotifierProvider(create: (_) => IncomeTypeController(uid)),
+          ChangeNotifierProvider(create: (_) => ExpenseTypeController(uid)),
+        ],
+        child: const TransactionsScreen(),
+      ),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => IncomeTypeController(uid)),
+          ChangeNotifierProvider(create: (_) => ExpenseTypeController(uid)),
+        ],
+        child: const ManagementScreen(),
+      ),
+      const SettingsScreen(),
+    ];
 
     return Scaffold(
       appBar: AppBar(title: Text('Welcome, ${user?.nickname ?? 'User'}')),
-      body: _screens[_selectedIndex],
+      body: screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,

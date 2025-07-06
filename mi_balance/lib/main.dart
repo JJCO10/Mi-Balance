@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mi_balance/controllers/expense_controller.dart';
+import 'package:mi_balance/controllers/expense_type_controller.dart';
+import 'package:mi_balance/controllers/income_controller.dart';
+import 'package:mi_balance/controllers/income_type_controller.dart';
 import 'package:mi_balance/firebase_options.dart';
 import 'package:mi_balance/views/auth/register_screen.dart';
 import 'package:mi_balance/views/dashboard/dashboard_screen.dart';
@@ -36,10 +40,43 @@ class MyApp extends StatelessWidget {
         '/login': (_) => LoginScreen(),
         '/register': (_) => const RegisterScreen(),
         '/dashboard': (_) => const DashboardScreen(),
-        '/incomes': (_) => const IncomesScreen(),
-        '/expenses': (_) => const ExpensesScreen(),
-        '/income-types': (_) => const IncomeTypesScreen(),
-        '/expense-types': (_) => const ExpenseTypesScreen(),
+        '/incomes': (context) {
+          final uid =
+              Provider.of<AuthController>(context, listen: false).user?.uid ??
+              '';
+          return ChangeNotifierProvider(
+            create: (_) => IncomeController(uid),
+            child: const IncomeScreen(),
+          );
+        },
+        '/expenses': (context) {
+          final uid =
+              Provider.of<AuthController>(context, listen: false).user?.uid ??
+              '';
+          return ChangeNotifierProvider(
+            create: (_) => ExpenseController(uid),
+            child: const ExpenseScreen(),
+          );
+        },
+        '/income-types': (context) {
+          final uid =
+              Provider.of<AuthController>(context, listen: false).user?.uid ??
+              '';
+          return ChangeNotifierProvider(
+            create: (_) => IncomeTypeController(uid),
+            child: const IncomeTypesScreen(),
+          );
+        },
+        '/expense-types': (context) {
+          final uid =
+              Provider.of<AuthController>(context, listen: false).user?.uid ??
+              '';
+          return ChangeNotifierProvider(
+            create: (_) => ExpenseTypeController(uid),
+            child: const ExpenseTypesScreen(),
+          );
+        },
+
         '/edit-user': (_) => const EditUserScreen(),
       },
     );

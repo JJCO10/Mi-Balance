@@ -40,7 +40,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           ),
           const SizedBox(height: 20),
           Expanded(
-            child: showIncomes ? const IncomesScreen() : const ExpensesScreen(),
+            child: showIncomes ? const IncomeScreen() : const ExpenseScreen(),
           ),
         ],
       ),
